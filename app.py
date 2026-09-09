@@ -19,122 +19,151 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# ESTILIZAÇÃO CSS AVANÇADA (DARK/MODERN UI)
+# ESTILIZAÇÃO CSS — PALETA OFICIAL CIIA
 # ==============================================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+    /* ── Base ── */
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #0D1B2A;
+        color: #F2F2F2;
     }
 
-    /* Gradient Header Hero */
+    /* Fundo principal da app */
+    .stApp {
+        background-color: #0D1B2A;
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1A2B3C !important;
+        border-right: 1px solid rgba(45, 109, 166, 0.3);
+    }
+    [data-testid="stSidebar"] * {
+        color: #F2F2F2 !important;
+    }
+
+    /* ── Hero Container ── */
     .hero-container {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(139, 92, 246, 0.15) 50%, rgba(16, 185, 129, 0.1) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, #003F71 0%, #1A2B3C 55%, #0D1B2A 100%);
+        border: 1px solid rgba(45, 109, 166, 0.45);
         border-radius: 16px;
         padding: 24px 28px;
         margin-bottom: 24px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
-    
+
     .hero-title {
         font-size: 2.1rem;
         font-weight: 800;
-        background: linear-gradient(90deg, #60A5FA, #A78BFA, #34D399);
+        background: linear-gradient(90deg, #A0BED9, #2D6DA6, #3B6D8C);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 6px;
+        line-height: 1.2;
     }
-    
+
     .hero-subtitle {
-        color: #94A3B8;
+        color: rgba(160, 190, 217, 0.9);
         font-size: 1.05rem;
         font-weight: 400;
         line-height: 1.5;
     }
 
-    /* KPI Cards */
+    /* ── KPI Cards ── */
     .kpi-card {
-        background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(145deg, #1A2B3C 0%, #0D1B2A 100%);
+        border: 1px solid rgba(45, 109, 166, 0.35);
         border-radius: 14px;
         padding: 18px 20px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         position: relative;
         overflow: hidden;
     }
-    
+
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #003F71, #2D6DA6, #A0BED9);
+        border-radius: 14px 14px 0 0;
+    }
+
     .kpi-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(96, 165, 250, 0.4);
-        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+        border-color: rgba(45, 109, 166, 0.6);
+        box-shadow: 0 10px 25px rgba(0, 63, 113, 0.35);
     }
-    
+
     .kpi-icon {
         font-size: 1.6rem;
         margin-bottom: 8px;
         display: inline-block;
     }
-    
+
     .kpi-value {
         font-size: 2rem;
         font-weight: 800;
-        color: #F8FAFC;
+        color: #F2F2F2;
         letter-spacing: -0.02em;
         line-height: 1.1;
     }
-    
+
     .kpi-label {
         font-size: 0.85rem;
         font-weight: 600;
-        color: #94A3B8;
+        color: #A0BED9;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-top: 4px;
     }
-    
+
     .kpi-sub {
         font-size: 0.78rem;
-        color: #64748B;
+        color: #3B6D8C;
         margin-top: 4px;
     }
 
-    /* Content Cards (Course Details) */
+    /* ── Content Cards ── */
     .detail-card {
-        background: #1E293B;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #1A2B3C;
+        border: 1px solid rgba(45, 109, 166, 0.25);
         border-radius: 12px;
         padding: 18px;
         margin-bottom: 14px;
         height: 100%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
-    
+
     .detail-card-title {
         font-size: 0.95rem;
         font-weight: 700;
+        color: #F2F2F2;
         margin-bottom: 10px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    
+
     .detail-card-content {
         font-size: 0.9rem;
-        color: #CBD5E1;
+        color: #A0BED9;
         line-height: 1.55;
     }
-    
-    .card-target { border-left: 4px solid #38BDF8; }
-    .card-positive { border-left: 4px solid #34D399; }
-    .card-warning { border-left: 4px solid #FBBF24; }
-    .card-feedback { border-left: 4px solid #A78BFA; }
 
-    /* Badges */
+    .card-target   { border-left: 4px solid #2D6DA6; }
+    .card-positive { border-left: 4px solid #3B6D8C; }
+    .card-warning  { border-left: 4px solid #8C1414; }
+    .card-feedback { border-left: 4px solid #A0BED9; }
+
+    /* ── Badges ── */
     .badge {
         display: inline-block;
         padding: 4px 10px;
@@ -144,33 +173,74 @@ st.markdown("""
         margin-right: 6px;
         margin-bottom: 6px;
     }
-    
-    .badge-primary { background: rgba(59, 130, 246, 0.2); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-purple { background: rgba(168, 85, 247, 0.2); color: #D8B4FE; border: 1px solid rgba(168, 85, 247, 0.3); }
-    .badge-teal { background: rgba(20, 184, 166, 0.2); color: #5EEAD4; border: 1px solid rgba(20, 184, 166, 0.3); }
-    .badge-amber { background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.3); }
 
-    /* Action button */
+    .badge-primary { background: rgba(0, 63, 113, 0.4);  color: #A0BED9; border: 1px solid rgba(45, 109, 166, 0.5); }
+    .badge-purple  { background: rgba(59, 109, 140, 0.3); color: #A0BED9; border: 1px solid rgba(59, 109, 140, 0.4); }
+    .badge-teal    { background: rgba(45, 109, 166, 0.25);color: #A0BED9; border: 1px solid rgba(45, 109, 166, 0.4); }
+    .badge-amber   { background: rgba(140, 20, 20, 0.25); color: #F2F2F2; border: 1px solid rgba(140, 20, 20, 0.4); }
+
+    /* ── Action Button ── */
     .btn-access {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #003F71 0%, #2D6DA6 100%);
+        color: #F2F2F2 !important;
         font-weight: 600;
         font-size: 0.95rem;
         padding: 10px 22px;
         border-radius: 10px;
         text-decoration: none !important;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 14px rgba(0, 63, 113, 0.45);
         margin-top: 12px;
     }
-    
+
     .btn-access:hover {
-        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        background: linear-gradient(135deg, #2D6DA6 0%, #3B6D8C 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+        box-shadow: 0 6px 20px rgba(45, 109, 166, 0.55);
+    }
+
+    /* ── Streamlit widget overrides ── */
+    .stMultiSelect [data-baseweb="tag"] {
+        background-color: #003F71 !important;
+        color: #F2F2F2 !important;
+        border: 1px solid rgba(45,109,166,0.5) !important;
+    }
+    .stButton > button {
+        background: linear-gradient(135deg, #003F71, #2D6DA6);
+        color: #F2F2F2;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #2D6DA6, #3B6D8C);
+        transform: translateY(-1px);
+    }
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #1A2B3C;
+        border-radius: 10px;
+        padding: 4px;
+        gap: 4px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 7px;
+        color: #A0BED9;
+        font-weight: 500;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #003F71 !important;
+        color: #F2F2F2 !important;
+    }
+    /* Alert / info box */
+    .stAlert {
+        background-color: rgba(0, 63, 113, 0.2);
+        border-left: 4px solid #2D6DA6;
+        color: #F2F2F2;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -303,6 +373,12 @@ except Exception as e:
 # ==============================================================================
 # SIDEBAR (FILTROS DE ALTA PERFORMANCE)
 # ==============================================================================
+# Logo CIIA no topo da sidebar
+import os as _os
+_logo_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "assets", "img", "logo_ciia.png")
+if _os.path.exists(_logo_path):
+    st.sidebar.image(_logo_path, width=160)
+st.sidebar.markdown("---")
 st.sidebar.markdown("## 🔍 Filtros & Busca Avançada")
 st.sidebar.caption("Refine o mapeamento por temas, lotes, tipos e instituições.")
 
@@ -411,14 +487,20 @@ if busca_texto:
 # ==============================================================================
 # CABEÇALHO HERO & CARDS DE INDICADORES (KPIS)
 # ==============================================================================
-st.markdown("""
-<div class="hero-container">
-    <div class="hero-title">📊 Panorama Nacional & Internacional de Capacitação em IA & ML</div>
-    <div class="hero-subtitle">
-        Mapeamento analítico e detalhado de graduações, pós-graduações, MBAs, certificações oficiais e cursos executivos de ponta em Inteligência Artificial, Machine Learning e Ciência de Dados.
+_logo_hero_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "img", "logo_ciia.png")
+_hero_col_logo, _hero_col_text = st.columns([1, 4])
+with _hero_col_logo:
+    if os.path.exists(_logo_hero_path):
+        st.image(_logo_hero_path, width=180)
+with _hero_col_text:
+    st.markdown("""
+    <div class="hero-container" style="margin-bottom:0;">
+        <div class="hero-title">📊 Panorama Nacional &amp; Internacional de Capacitação em IA &amp; ML</div>
+        <div class="hero-subtitle">
+            Mapeamento analítico e detalhado de graduações, pós-graduações, MBAs, certificações oficiais e cursos executivos de ponta em Inteligência Artificial, Machine Learning e Ciência de Dados.
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # Grid de KPIs Modernos
 kpi1, kpi2, kpi3, kpi4, kpi5 = st.columns(5)
