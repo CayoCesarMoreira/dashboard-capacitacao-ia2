@@ -1,9 +1,11 @@
 import os
 import io
 import re
+# pyrefly: ignore [missing-import]
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+# pyrefly: ignore [missing-import]
 import plotly.graph_objects as go
 
 # ==============================================================================
@@ -817,8 +819,9 @@ with tab_comparador:
     if len(cursos_comparar) < 2:
         st.info("💡 Selecione pelo menos 2 cursos para exibir a tabela comparativa.")
     else:
-        df_comp = df[df['Nome do curso, guia ou programa'].isin(cursos_comparar)].copy()
-        
+        df_comp = df[df['Nome do curso, guia ou programa'].isin(cursos_comparar)].drop_duplicates(subset=['Nome do curso, guia ou programa']).copy()
+        df_comp = df_comp.set_index('Nome do curso, guia ou programa').loc[cursos_comparar].reset_index()
+
         cols_comp = st.columns(len(cursos_comparar))
         
         for idx, (_, row) in enumerate(df_comp.iterrows()):
