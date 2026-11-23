@@ -22,12 +22,32 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
+.ipynb_checkpoints/
 
 # Ambientes virtuais e IDEs
 .vscode/
 .idea/
 *.swp
 *~
+
+# Credenciais, chaves de API e segredos (NUNCA versionar)
+.env
+.env.*
+.streamlit/secrets.toml
+secrets.toml
+*.pem
+*.key
+credentials*.json
+service_account*.json
+
+# Arquivos temporários do Excel/Office e do sistema operacional
+~$*
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # Arquivos temporários de inspeção
 inspect_*.py

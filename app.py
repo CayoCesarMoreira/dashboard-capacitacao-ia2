@@ -252,12 +252,13 @@ st.markdown("""
 @st.cache_data
 def carregar_dados():
     # Prioridade: base consolidada final (gerada pelo script consolidar.py),
-    # depois o arquivo original como fallback.
+    # depois as planilhas-fonte em dados/fontes/ como fallback.
+    # Caminhos relativos à pasta do app.py (funciona independente do diretório de execução).
+    _base_dir = os.path.dirname(os.path.abspath(__file__))
     possiveis_caminhos_base = [
-        "base_consolidada_final.xlsx",
-        "Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_Consolidado.xlsx",
-        r"C:\Users\visitante\Desktop\Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_Consolidado.xlsx",
-        r"C:\Users\visitante\Desktop\campanha\Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_Consolidado.xlsx"
+        os.path.join(_base_dir, "base_consolidada_final.xlsx"),
+        os.path.join(_base_dir, "dados", "fontes", "Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_2022_2026.xlsx"),
+        os.path.join(_base_dir, "dados", "fontes", "Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_Consolidado.xlsx"),
     ]
 
     arquivo_encontrado = None
@@ -295,8 +296,15 @@ def carregar_dados():
             df_consolidado['Data de lançamento'] = 'Não informado'
 
     # Tratamento de strings e valores nulos
-    colunas_texto = df_consolidado.select_dtypes(include=['object']).columns
+    # 'string' garante compatibilidade com o dtype de texto padrão do pandas >= 3.0
+    colunas_texto = df_consolidado.select_dtypes(include=['object', 'string']).columns
     df_consolidado[colunas_texto] = df_consolidado[colunas_texto].fillna("Não informado")
+    # Datas/anos podem vir como datetime ou número: padroniza como texto para filtros e exibição
+    for _col in ('Data de lançamento', 'Ano de Lançamento'):
+        df_consolidado[_col] = df_consolidado[_col].apply(
+            lambda v: v.strftime('%m/%Y') if hasattr(v, 'strftime')
+            else ('Não informado' if pd.isna(v) else str(int(v)) if isinstance(v, float) and v.is_integer() else str(v))
+        )
 
     # Normalizar 'Não informado' na coluna Ano de Lançamento (pode vir como 'Nao informado' do script)
     df_consolidado['Ano de Lançamento'] = df_consolidado['Ano de Lançamento'].replace(
@@ -366,7 +374,7 @@ try:
     df, df_resumo = carregar_dados()
 except Exception as e:
     st.error(f"⚠️ Erro ao carregar a base de dados: {e}")
-    st.info("Por favor, verifique se o arquivo 'Mapeamento_Capacitacao_IA_ML_CienciaDados_Brasil_Consolidado.xlsx' está acessível.")
+    st.info("Verifique se 'base_consolidada_final.xlsx' existe na raiz do projeto (gere-o com `python consolidar.py`).")
     st.stop()
 
 
@@ -374,9 +382,8 @@ except Exception as e:
 # SIDEBAR (FILTROS DE ALTA PERFORMANCE)
 # ==============================================================================
 # Logo CIIA no topo da sidebar
-import os as _os
-_logo_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "assets", "img", "logo_ciia.png")
-if _os.path.exists(_logo_path):
+_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "img", "logo_ciia.png")
+if os.path.exists(_logo_path):
     st.sidebar.image(_logo_path, width=160)
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🔍 Filtros & Busca Avançada")
@@ -420,7 +427,10 @@ anos_selecionados = st.sidebar.multiselect(
 )
 
 # Filtro por Lote
-lotes_disponiveis = sorted(df['Lote'].astype(str).unique(), key=lambda x: (x.startswith("Lote"), x))
+lotes_disponiveis = sorted(
+    df['Lote'].astype(str).unique(),
+    key=lambda x: (x.startswith("Lote"), [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', x)])
+)
 lotes_selecionados = st.sidebar.multiselect(
     "📦 Lote de Mapeamento",
     options=lotes_disponiveis,
@@ -445,7 +455,7 @@ instituicoes_selecionadas = st.sidebar.multiselect(
 )
 
 # Botão para resetar filtros
-if st.sidebar.button("🔄 Redefinir Todos os Filtros", use_container_width=True):
+if st.sidebar.button("🔄 Redefinir Todos os Filtros", width="stretch"):
     st.rerun()
 
 st.sidebar.markdown("---")
@@ -618,7 +628,7 @@ with tab_graficos:
                 height=420,
                 coloraxis_showscale=False
             )
-            st.plotly_chart(fig_inst, use_container_width=True)
+            st.plotly_chart(fig_inst, width="stretch")
 
         with g_col2:
             st.markdown("#### 🎓 Distribuição por Categoria Geral de Formação")
@@ -645,7 +655,7 @@ with tab_graficos:
                 margin=dict(l=10, r=10, t=10, b=10),
                 height=420
             )
-            st.plotly_chart(fig_macro, use_container_width=True)
+            st.plotly_chart(fig_macro, width="stretch")
 
         st.markdown("---")
         
@@ -681,7 +691,7 @@ with tab_graficos:
                 height=360,
                 coloraxis_showscale=False
             )
-            st.plotly_chart(fig_tags, use_container_width=True)
+            st.plotly_chart(fig_tags, width="stretch")
 
         with c_row2_2:
             st.markdown("#### 📦 Volume de Cursos Mapeados por Lote")
@@ -708,7 +718,7 @@ with tab_graficos:
                 height=360,
                 coloraxis_showscale=False
             )
-            st.plotly_chart(fig_lotes, use_container_width=True)
+            st.plotly_chart(fig_lotes, width="stretch")
 
         st.markdown("---")
 
@@ -753,7 +763,7 @@ with tab_graficos:
             height=340,
             coloraxis_showscale=False
         )
-        st.plotly_chart(fig_anos, use_container_width=True)
+        st.plotly_chart(fig_anos, width="stretch")
 
 
 # ------------------------------------------------------------------------------
@@ -946,7 +956,7 @@ with tab_tabela:
             data=csv_data,
             file_name="mapeamento_capacitacao_ia_filtrado.csv",
             mime="text/csv",
-            use_container_width=True
+            width="stretch"
         )
         
     with col_exp3:
@@ -961,7 +971,7 @@ with tab_tabela:
             data=excel_data,
             file_name="mapeamento_capacitacao_ia_filtrado.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True
+            width="stretch"
         )
     
     st.markdown("<br>", unsafe_allow_html=True)
@@ -997,7 +1007,7 @@ with tab_tabela:
             "Lote": st.column_config.TextColumn("Lote", width="small"),
             "Link_Limpo": st.column_config.LinkColumn("Link Oficial", display_text="Acessar")
         },
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         height=520
     )
@@ -1014,7 +1024,7 @@ with tab_metodologia:
     
     if not df_resumo.empty:
         st.markdown("#### 📑 Resumo por Lote de Mapeamento")
-        st.dataframe(df_resumo.dropna(how='all'), use_container_width=True, hide_index=True)
+        st.dataframe(df_resumo.dropna(how='all'), width="stretch", hide_index=True)
     
     st.markdown("""
     #### 📌 Critérios e Dimensões Coletadas:
